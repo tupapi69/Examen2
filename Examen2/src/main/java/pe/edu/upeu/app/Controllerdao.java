@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import org.w3c.dom.events.MouseEvent;
 
 /**
  *
@@ -26,6 +25,7 @@ public class Controllerdao {
         this.model = model;
         JLabel[][] casillas = view.getcasillas();
         agregarListeners();
+        crearjugadores();
     }
 
     private void agregarListeners() {
@@ -34,15 +34,29 @@ public class Controllerdao {
                 agregarEventoMouse(i,j);
             }
         }
+                 JButton botonReset = view.getBotonReset();
+         botonReset.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.resetdao(casillas);
+            }
+        });
     }
         private void agregarEventoMouse(int i, int j) {
         JLabel casillaActual = casillas[i][j];
         casillaActual.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
-                model.marcarCasilla(i,j,casillas);
+                model.marcarCasilla(i,j,casillas, view);
             }
         });
+    }
+
+    private void crearjugadores() {
+    JLabel j1 = view.getvictoriasJ1();
+    JLabel j2 = view.getvictoriasJ2();
+    model.setJugadores(j1,j2);
+    
     }
 
 

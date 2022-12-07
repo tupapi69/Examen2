@@ -4,25 +4,81 @@
  */
 package pe.edu.upeu.app;
 
+import java.awt.image.BufferedImage;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import pe.edu.upeu.app.dao.ResultadoDao;
+import pe.edu.upeu.app.dao.ResultadoDaoI;
+import pe.edu.upeu.app.modelo.ResultadoTO;
+import pe.edu.upeu.app.util.MsgBox;
+import pe.edu.upeu.app.util.UtilsX;
 
 /**
  *
  * @author hp
  */
 public class Viewdao extends javax.swing.JFrame {
-
+    DefaultTableModel modelo;
+    MsgBox msg;
+    TableRowSorter<TableModel> trsfiltro;
+    BufferedImage image;
+    UtilsX obj = new UtilsX();
+    ResultadoDaoI rDao;
     /**
      * Creates new form Viewdao
      */
     private JLabel[][] casillas;
+    public static ResultadoTO uTO = new ResultadoTO();
     public Viewdao() {
         casillas = new JLabel[3][3];
         initComponents();
         asignarcasillas();
     }
+    public void ListarResultado() {
+        rDao = new ResultadoDao();
+        List<ResultadoTO> listarResultado = rDao.listarResultado();
+        jTable1.setAutoCreateRowSorter(true);
+        modelo = (DefaultTableModel) jTable1.getModel();
+        modelo.setNumRows(0);
+        Object[] ob = new Object[7];
+        for (int i = 0; i < listarResultado.size(); i++) {
+            ob[0] = listarResultado.get(i).getNombrePartida();
+            ob[1] = listarResultado.get(i).getIdResultado();
+            ob[2] = listarResultado.get(i).getNombreJugador1();
+            ob[3] = listarResultado.get(i).getNombreJugador2();
+            ob[4] = listarResultado.get(i).getGanador();
+            ob[5] = listarResultado.get(i).getPunto();
+            ob[6] = listarResultado.get(i).getEstado();
+            modelo.addRow(ob);
+        }
+        jTable1.setModel(modelo);
+    }
 
+    private void paintForm() {
+        if (jTable1.getSelectedRow() != -1) {
+            modelo = (DefaultTableModel) jTable1.getModel();
+            int rowx = jTable1.getSelectedRow();
+            Object valor = jTable1.getValueAt(rowx, 1);
+            rDao = new ResultadoDao();
+            ResultadoTO d = rDao.buscarResultado(Integer.parseInt(valor.toString()));
+            
+            txtJugador1.setText(d.getNombreJugador1());
+            txtJugador2.setText(d.getNombreJugador2());
+        } else {
+            int i=0;
+        }
+    }
+
+    public void resetForm() {
+        txtJugador1.setText("");
+        txtJugador2.setText("");
+        txtJugador1.requestFocus();
+
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -33,6 +89,8 @@ public class Viewdao extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         casilla1 = new javax.swing.JLabel();
         casilla3 = new javax.swing.JLabel();
@@ -49,9 +107,40 @@ public class Viewdao extends javax.swing.JFrame {
         victoriasJ2 = new javax.swing.JLabel();
         botonReinicio = new javax.swing.JButton();
         jLabel17 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        txtJugador2 = new javax.swing.JTextField();
+        txtJugador1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
 
         jLabel2.setText("jLabel2");
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre partida", "Id partida", "Nombre de jugador 1", "Nombre del jugador 2", "Ganador", "Puntos", "Estado"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(1).setMinWidth(0);
+            jTable1.getColumnModel().getColumn(1).setPreferredWidth(0);
+            jTable1.getColumnModel().getColumn(1).setMaxWidth(0);
+        }
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -60,38 +149,47 @@ public class Viewdao extends javax.swing.JFrame {
 
         casilla1.setBackground(new java.awt.Color(255, 255, 255));
         casilla1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla1.setForeground(new java.awt.Color(51, 255, 51));
         casilla1.setOpaque(true);
 
         casilla3.setBackground(new java.awt.Color(255, 255, 255));
         casilla3.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla3.setForeground(new java.awt.Color(51, 255, 51));
         casilla3.setOpaque(true);
 
         casilla2.setBackground(new java.awt.Color(255, 255, 255));
         casilla2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla2.setForeground(new java.awt.Color(51, 255, 51));
         casilla2.setOpaque(true);
 
         casilla6.setBackground(new java.awt.Color(255, 255, 255));
         casilla6.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla6.setForeground(new java.awt.Color(51, 255, 51));
         casilla6.setOpaque(true);
 
         casilla5.setBackground(new java.awt.Color(255, 255, 255));
         casilla5.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla5.setForeground(new java.awt.Color(51, 255, 51));
         casilla5.setOpaque(true);
 
         casilla8.setBackground(new java.awt.Color(255, 255, 255));
         casilla8.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla8.setForeground(new java.awt.Color(51, 255, 51));
         casilla8.setOpaque(true);
 
         casilla7.setBackground(new java.awt.Color(255, 255, 255));
         casilla7.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla7.setForeground(new java.awt.Color(51, 255, 51));
         casilla7.setOpaque(true);
 
         casilla9.setBackground(new java.awt.Color(255, 255, 255));
         casilla9.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla9.setForeground(new java.awt.Color(51, 255, 51));
         casilla9.setOpaque(true);
 
         casilla4.setBackground(new java.awt.Color(255, 255, 255));
         casilla4.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        casilla4.setForeground(new java.awt.Color(51, 255, 51));
         casilla4.setOpaque(true);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -126,32 +224,36 @@ public class Viewdao extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(casilla1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(casilla2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(casilla3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(casilla6, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(casilla5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(casilla4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(casilla8, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(casilla9, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(casilla7, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(30, Short.MAX_VALUE))
+                    .addComponent(casilla1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(casilla2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(casilla3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(casilla5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(casilla6, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(15, 15, 15))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(casilla4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(casilla8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(casilla9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(casilla7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 290, 300));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 290, 290));
 
-        jLabel13.setBackground(new java.awt.Color(255, 204, 204));
+        jLabel13.setBackground(new java.awt.Color(0, 255, 204));
         jLabel13.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(0, 0, 0));
         jLabel13.setText("Jugador 2");
         jLabel13.setOpaque(true);
-        getContentPane().add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 130, 110, 50));
+        getContentPane().add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 540, 110, 40));
 
         victoriasJ1.setBackground(new java.awt.Color(255, 204, 204));
         victoriasJ1.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
@@ -159,33 +261,105 @@ public class Viewdao extends javax.swing.JFrame {
         victoriasJ1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         victoriasJ1.setText("0");
         victoriasJ1.setOpaque(true);
-        getContentPane().add(victoriasJ1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 70, 90, 50));
+        getContentPane().add(victoriasJ1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 480, 90, 40));
 
         jLabel12.setBackground(new java.awt.Color(51, 51, 51));
         jLabel12.setFont(new java.awt.Font("Showcard Gothic", 0, 36)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(0, 153, 255));
         jLabel12.setText("Victorias");
-        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 20, 200, 40));
+        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 430, 200, 40));
 
-        victoriasJ2.setBackground(new java.awt.Color(255, 204, 204));
+        victoriasJ2.setBackground(new java.awt.Color(0, 255, 204));
         victoriasJ2.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
         victoriasJ2.setForeground(new java.awt.Color(0, 0, 0));
         victoriasJ2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         victoriasJ2.setText("0");
         victoriasJ2.setOpaque(true);
-        getContentPane().add(victoriasJ2, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 130, 90, 50));
+        getContentPane().add(victoriasJ2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 540, 90, 40));
 
         botonReinicio.setBackground(new java.awt.Color(255, 0, 0));
         botonReinicio.setForeground(new java.awt.Color(0, 0, 0));
         botonReinicio.setText("VOLVER A JUGAR");
-        getContentPane().add(botonReinicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 330, -1, -1));
+        botonReinicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonReinicioActionPerformed(evt);
+            }
+        });
+        getContentPane().add(botonReinicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 380, -1, -1));
 
         jLabel17.setBackground(new java.awt.Color(255, 204, 204));
         jLabel17.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
         jLabel17.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel17.setText("Jugador 1");
+        jLabel17.setText("Alumno:Cardenas Vilca Rennzo");
         jLabel17.setOpaque(true);
-        getContentPane().add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 70, 110, 50));
+        getContentPane().add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 310, 30));
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre partida", "Id partida", "Nombre jugador 1", "Nombre jugador 2", "Ganador", "puntos ", "Estado"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, true, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(jTable2);
+        if (jTable2.getColumnModel().getColumnCount() > 0) {
+            jTable2.getColumnModel().getColumn(1).setMinWidth(0);
+            jTable2.getColumnModel().getColumn(1).setPreferredWidth(0);
+            jTable2.getColumnModel().getColumn(1).setMaxWidth(0);
+        }
+
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 240, 640, 340));
+
+        jLabel18.setBackground(new java.awt.Color(255, 204, 204));
+        jLabel18.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
+        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel18.setText("Jugador 1");
+        jLabel18.setOpaque(true);
+        getContentPane().add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 480, 110, 40));
+
+        jLabel19.setBackground(new java.awt.Color(255, 204, 204));
+        jLabel19.setFont(new java.awt.Font("Snap ITC", 0, 24)); // NOI18N
+        jLabel19.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel19.setText("EVALUCION UNIDAD 2");
+        jLabel19.setOpaque(true);
+        getContentPane().add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 340, 30));
+
+        jLabel14.setBackground(new java.awt.Color(0, 255, 204));
+        jLabel14.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
+        jLabel14.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel14.setText("Jugador 2");
+        jLabel14.setOpaque(true);
+        getContentPane().add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 190, 130, 30));
+
+        jLabel21.setBackground(new java.awt.Color(255, 204, 204));
+        jLabel21.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
+        jLabel21.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel21.setText("Jugador 1");
+        jLabel21.setOpaque(true);
+        getContentPane().add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 140, 130, 30));
+
+        txtJugador2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtJugador2ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(txtJugador2, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 190, 340, 30));
+
+        txtJugador1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtJugador1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(txtJugador1, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 140, 340, 30));
 
         jLabel1.setBackground(new java.awt.Color(255, 204, 204));
         jLabel1.setFont(new java.awt.Font("Showcard Gothic", 0, 24)); // NOI18N
@@ -193,45 +367,39 @@ public class Viewdao extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/OIP.jpg"))); // NOI18N
         jLabel1.setText("jLabel1");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 650, 360));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-160, -40, 1140, 681));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void botonReinicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonReinicioActionPerformed
+        uTO.setNombrePartida("Partida "+ uTO.getIdResultado());
+        uTO.setNombreJugador1(txtJugador1.getText());
+        uTO.setNombreJugador2(txtJugador2.getText());
+        uTO.setGanador("");
+        uTO.setPunto(0);
+        uTO.setEstado("Jugando");
+
+        rDao = new ResultadoDao();
+
+        int dx = rDao.create(uTO);
+        uTO.setIdResultado(dx);
+
+        ListarResultado();        // TODO add your handling code here:
+    }//GEN-LAST:event_botonReinicioActionPerformed
+
+    private void txtJugador1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtJugador1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtJugador1ActionPerformed
+
+    private void txtJugador2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtJugador2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtJugador2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Viewdao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Viewdao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Viewdao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Viewdao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Viewdao().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton botonReinicio;
@@ -247,9 +415,19 @@ public class Viewdao extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
+    private javax.swing.JTextField txtJugador1;
+    private javax.swing.JTextField txtJugador2;
     private javax.swing.JLabel victoriasJ1;
     private javax.swing.JLabel victoriasJ2;
     // End of variables declaration//GEN-END:variables
